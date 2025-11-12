@@ -1,0 +1,11 @@
+nom,espece,zone,arrosage,floraison_mois,prix_euros,hauteur_cm
+Rosa,Rose,Paris,Moyen,6,15,80
+Tulipa,Tulipe,Banlieue,Faible,4,8,40
+Lavandula,Lavande,Paris,Faible,7,12,60
+Hydrangea,Hortensia,Banlieue,Fort,8,25,120
+Geranium,Géranium,Paris,Moyen,5,10,30
+Narcissus,Narcisse,Banlieue,Faible,3,7,35
+Rosmarinus,Romarin,Paris,Faible,5,9,50
+Petunia,Pétunia,Banlieue,Moyen,6,6,25
+Salvia,Sauge,Paris,Faible,7,11,70
+Begonia,Bégonia,Banlieue,Moyen,8,13,40
