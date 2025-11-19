@@ -4,7 +4,7 @@ Mon parcours d'apprentissage Python - De jardinier à AI Developer
 
 ## 👤 À propos
 
-**Victor (ou Tom), 33 ans**  
+**Victor ou Tom, 33 ans**  
 Jardinier à la Ville de Paris en reconversion vers l'IA et le développement Python.
 
 **Objectif :** Devenir AI Developer / Prompt Engineer d'ici mes 40 ans.
@@ -12,8 +12,8 @@ Jardinier à la Ville de Paris en reconversion vers l'IA et le développement Py
 ## 📊 Progression
 
 **Démarré :** Novembre 2025  
-**Sessions complétées :** 20/20  
-**Niveau actuel :** 98% 🚀
+**Sessions complétées :** 21/21  
+**Niveau actuel :** 99% 🚀
 
 ## 🗂️ Structure du projet
 
@@ -43,6 +43,14 @@ Manipulation et analyse de données avec Pandas
 - Scraper de citations avec tags et auteurs
 - Scraper de livres avec prix et notes
 - Export automatique en CSV
+
+### 07-Journal-Botanique
+**🌱 Application de gestion de plantes**
+- Ajout de plantes avec informations détaillées
+- Affichage formaté et lisible
+- Sauvegarde persistante en JSON
+- Chargement automatique au démarrage
+- Menu interactif professionnel
 
 ### 00-Exercices_pratiques
 Exercices de révision et concepts pratiques
@@ -76,6 +84,15 @@ Extraction automatique de données structurées depuis le web :
 
 **Fichiers :** `06-Web-Scraping/scraper_livres.py`
 
+### 3. Journal Botanique
+Application console de gestion de plantes personnelles :
+- Base de données de plantes avec caractéristiques
+- Sauvegarde automatique en JSON
+- Interface utilisateur intuitive
+- Utilisable au quotidien dans mon métier
+
+**Fichier :** `07-Journal-Botanique/journal.py`
+
 ## 📚 Compétences acquises
 
 ✅ Programmation Python (bases et avancé)  
@@ -87,6 +104,8 @@ Extraction automatique de données structurées depuis le web :
 ✅ Git et GitHub  
 ✅ Gestion d'erreurs (try/except)  
 ✅ Fonctions avec documentation  
+✅ Applications console interactives  
+✅ Persistance de données  
 
 ## 🎓 Parcours
 
@@ -95,6 +114,7 @@ Extraction automatique de données structurées depuis le web :
 - **Session 11-15 :** Pandas et analyse de données
 - **Session 16-19 :** API IA et assistant conversationnel
 - **Session 20 :** Web scraping et export de données
+- **Session 21 :** Application complète avec persistance JSON
 
 ## 📬 Contact
 
@@ -102,4 +122,4 @@ GitHub: [@BrainRot96](https://github.com/BrainRot96)
 
 ---
 
-*De jardinier à développeur IA - Portfolio en construction - Novembre 2024 → ...*
+*De jardinier à développeur IA - Portfolio en construction - Novembre 2025 → ...*
