@@ -17,7 +17,8 @@ def afficher_menu():
     print("="*50)
     print("1. Ajouter plante")
     print("2. Voir toutes les plantes")
-    print("3. quitter")
+    print("3. Rechercher une plante")
+    print("4. quitter")
     print("="*50)
 
 # ==== Ajouter une plante ====
@@ -76,6 +77,51 @@ def afficher_plantes():
         print(f"\n📊 Total : {len(plantes)} plante(s)")
 
 
+# === Defis : Rechercher plante / Modification du menu
+
+def rechercher_plantes():
+    """Rechercher des plantes par critère"""
+    print("\n" + "="*50)
+    print("🔍 RECHERCHER DES PLANTES")
+    print("="*50)
+
+    if len(plantes) == 0:
+        print("\n📭 Aucune plante dans le journal.")
+        return
+    
+    print("\nRechercher par :")
+    print("1. Nom")
+    print("2. Lieu")
+    print("3. Espece")
+
+    choix = input("\nTon choix : ")
+
+    if choix == "1":
+        critere = "nom"
+    elif choix == "2":
+        critere = "lieu"
+    elif choix == "3":
+        critere = "espece"
+    else: 
+        print("❌ Choix invalide")
+        return
+
+    # Ces lignes doivent être INDENTÉES (au même niveau que le if)
+    recherche = input(f"\nRecherche ({critere}) : ").lower()
+
+    resultats = [p for p in plantes if recherche in p.get(critere, "").lower()]
+
+    if len(resultats) == 0:
+        print(f"\n❌ Aucune plante trouvée avec '{recherche}'")
+    else:
+        print(f"\n✅ {len(resultats)} plante(s) trouvée(s) :\n")
+        for i, plante in enumerate(resultats, 1):
+            print(f"{i}. 🌱 {plante['nom']}")
+            for cle, valeur in plante.items():
+                if cle != "nom" and valeur:
+                    print(f"   {cle} : {valeur}")
+            print()
+
 # ==== Sauvegarder les données ====
 
 def sauvegarder_donnees():
@@ -113,6 +159,8 @@ while True:
     elif choix == "2":
         afficher_plantes()
     elif choix == "3":
+        rechercher_plantes()      
+    elif choix == "4":
         sauvegarder_donnees() 
         print("\nA bientôt")
         break
