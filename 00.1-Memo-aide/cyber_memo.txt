@@ -1,0 +1,307 @@
+================================================================================
+                    🛡️ FICHE MÉMO CYBERSÉCURITÉ - PYTHON 🛡️
+================================================================================
+                            Par Tom - Novembre 2024
+================================================================================
+
+
+================================================================================
+                         1️⃣ PORTS À RETENIR
+================================================================================
+
+PORT    | SERVICE       | DESCRIPTION
+--------|---------------|------------------------------------------------------
+21      | FTP           | Transfert de fichiers (File Transfer Protocol)
+22      | SSH           | Connexion sécurisée à distance (Secure Shell)
+23      | Telnet        | Connexion à distance (non sécurisé, obsolète)
+25      | SMTP          | Envoi d'emails (Simple Mail Transfer Protocol)
+53      | DNS           | Résolution de noms de domaine
+80      | HTTP          | Web non sécurisé (HyperText Transfer Protocol)
+110     | POP3          | Réception d'emails
+143     | IMAP          | Réception d'emails (plus moderne que POP3)
+443     | HTTPS         | Web sécurisé (HTTP + SSL/TLS)
+3306    | MySQL         | Base de données MySQL
+3389    | RDP           | Bureau à distance Windows (Remote Desktop)
+5432    | PostgreSQL    | Base de données PostgreSQL
+8080    | HTTP-Alt      | HTTP alternatif (souvent serveurs de dev)
+8443    | HTTPS-Alt     | HTTPS alternatif
+
+ASTUCE POUR RETENIR :
+- 22 = SSH (2+2=4 lettres dans "SAFE")
+- 80 = HTTP (pas de "S" = pas sécurisé)
+- 443 = HTTPS (avec le "S" = sécurisé)
+
+
+================================================================================
+                         2️⃣ TYPES D'ATTAQUES
+================================================================================
+
+ATTAQUE             | DESCRIPTION                    | EXEMPLE
+--------------------|--------------------------------|---------------------------
+SQL Injection       | Injection de code SQL          | id=1' UNION SELECT * --
+                    | dans les requêtes              |
+                    |                                |
+XSS                 | Injection de scripts           | <script>alert('XSS')</script>
+(Cross-Site         | JavaScript malveillants        | javascript:alert(1)
+Scripting)          |                                |
+                    |                                |
+Brute Force         | Tentatives répétées de         | Multiples "Failed password"
+                    | connexion avec différents      | dans les logs
+                    | mots de passe                  |
+                    |                                |
+Directory           | Accès à des fichiers           | ../../etc/passwd
+Traversal           | en dehors du répertoire        | ..\..\windows\system32
+                    | autorisé                       |
+                    |                                |
+Command Injection   | Exécution de commandes         | ; cat /etc/passwd
+                    | système via l'application      | && rm -rf /
+
+PATTERNS REGEX POUR DÉTECTION :
+
+SQL Injection:
+    (union|select|insert|drop|delete).*from
+    ('|")\s*(or|and)\s*('|")
+    --
+
+XSS:
+    <script
+    javascript:
+    onerror=
+    onload=
+    alert\(
+
+Directory Traversal:
+    \.\./ 
+    \.\.\\
+    /etc/passwd
+    /etc/shadow
+
+Brute Force:
+    failed.*password
+    invalid.*login
+    authentication.*failed
+
+Command Injection:
+    ;\s*(cat|ls|rm|wget|curl|bash|sh)
+    &&
+    \|\|
+
+
+================================================================================
+                         3️⃣ MODES FICHIERS PYTHON
+================================================================================
+
+MODE    | NOM           | DESCRIPTION
+--------|---------------|------------------------------------------------------
+'r'     | Read          | Lecture seule (fichier doit exister)
+'w'     | Write         | Écriture (crée ou ÉCRASE le fichier)
+'a'     | Append        | Ajout à la fin (crée si n'existe pas)
+'x'     | Exclusive     | Création exclusive (erreur si fichier existe)
+'rb'    | Read Binary   | Lecture en mode binaire (images, PDF...)
+'wb'    | Write Binary  | Écriture en mode binaire
+
+EXEMPLES :
+
+# Lecture
+with open("fichier.txt", 'r') as f:
+    contenu = f.read()
+
+# Écriture (ATTENTION : écrase le contenu existant !)
+with open("fichier.txt", 'w') as f:
+    f.write("Nouveau contenu")
+
+# Ajout à la fin
+with open("fichier.txt", 'a') as f:
+    f.write("Ligne ajoutée\n")
+
+# Lecture ligne par ligne
+with open("fichier.txt", 'r') as f:
+    for ligne in f:
+        print(ligne.strip())  # .strip() enlève les \n
+
+ASTUCE :
+- 'r' = Read = Lecture
+- 'w' = Write = Écriture (écrase)
+- 'a' = Append = Ajouter
+
+
+================================================================================
+                         4️⃣ SOCKETS (CONNEXION RÉSEAU)
+================================================================================
+
+DÉFINITION :
+Un socket est un "tuyau" de communication entre deux machines sur un réseau.
+C'est la base de toute communication réseau en programmation.
+
+CRÉATION D'UN SOCKET :
+
+import socket
+
+# Créer un socket TCP
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Paramètres :
+# AF_INET = IPv4 (adresses comme 192.168.1.1)
+# SOCK_STREAM = TCP (connexion fiable)
+
+UTILISATION POUR SCANNER UN PORT :
+
+def scanner_port(ip, port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)  # Timeout de 1 seconde
+        
+        resultat = sock.connect_ex((ip, port))
+        # connect_ex retourne 0 si connexion réussie
+        
+        sock.close()
+        
+        if resultat == 0:
+            return True   # Port OUVERT
+        else:
+            return False  # Port FERMÉ
+    except:
+        return False
+
+VALEURS DE RETOUR connect_ex() :
+- 0 = Succès = Port OUVERT
+- Autre valeur = Échec = Port FERMÉ ou filtré
+
+TIMEOUT :
+sock.settimeout(1)  # Attendre max 1 seconde
+# Évite d'attendre indéfiniment si le port ne répond pas
+
+
+================================================================================
+                         5️⃣ REGEX (EXPRESSIONS RÉGULIÈRES)
+================================================================================
+
+SYMBOLES DE BASE :
+
+SYMBOLE | SIGNIFICATION              | EXEMPLE
+--------|----------------------------|----------------------------------
+\d      | Un chiffre (0-9)           | \d = "5"
+\w      | Lettre, chiffre ou _       | \w = "a", "5", "_"
+\s      | Espace ou tabulation       | \s = " "
+.       | N'importe quel caractère   | . = "a", "5", "@"
+\.      | Un point littéral          | \. = "."
+^       | Début de ligne             | ^Bonjour
+$       | Fin de ligne               | fin$
+
+QUANTIFICATEURS :
+
+SYMBOLE | SIGNIFICATION              | EXEMPLE
+--------|----------------------------|----------------------------------
+*       | 0 ou plusieurs fois        | \d* = "", "5", "123"
++       | 1 ou plusieurs fois        | \d+ = "5", "123" (pas "")
+?       | 0 ou 1 fois                | \d? = "", "5"
+{3}     | Exactement 3 fois          | \d{3} = "123"
+{1,3}   | Entre 1 et 3 fois          | \d{1,3} = "1", "12", "123"
+
+PATTERN POUR UNE ADRESSE IP :
+
+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
+
+Décomposition :
+- \d{1,3} = 1 à 3 chiffres (ex: 192)
+- \.      = un point
+- Répété 4 fois = 192.168.1.100
+
+CODE PYTHON :
+
+import re
+
+ligne = "Connexion depuis 192.168.1.100 à 10:30"
+
+# Chercher un pattern
+match = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', ligne)
+
+if match:
+    ip = match.group()  # Récupérer le texte trouvé
+    print(ip)  # "192.168.1.100"
+
+
+================================================================================
+                         6️⃣ FONCTIONS UTILES
+================================================================================
+
+CHAÎNES DE CARACTÈRES :
+
+texte = "  Bonjour Tom  \n"
+
+texte.strip()      # "Bonjour Tom" (enlève espaces et \n)
+texte.lower()      # "  bonjour tom  \n" (minuscules)
+texte.upper()      # "  BONJOUR TOM  \n" (majuscules)
+
+VÉRIFICATIONS :
+
+caractere = "A"
+
+caractere.isdigit()   # False (est-ce un chiffre ?)
+caractere.isupper()   # True (est-ce une majuscule ?)
+caractere.islower()   # False (est-ce une minuscule ?)
+caractere.isalpha()   # True (est-ce une lettre ?)
+
+VÉRIFIER SI AU MOINS UN ÉLÉMENT CORRESPOND :
+
+password = "Admin123"
+
+# Y a-t-il au moins un chiffre ?
+any(c.isdigit() for c in password)  # True
+
+# Y a-t-il au moins une majuscule ?
+any(c.isupper() for c in password)  # True
+
+DICTIONNAIRES - ACCÈS SÉCURISÉ :
+
+data = {"nom": "Tom"}
+
+data["age"]              # ❌ KeyError si "age" n'existe pas
+data.get("age", 0)       # ✅ Retourne 0 si "age" n'existe pas
+data.get("age", "N/A")   # ✅ Retourne "N/A" si "age" n'existe pas
+
+
+================================================================================
+                         7️⃣ ORDRE D'UNE ANALYSE DE SÉCURITÉ
+================================================================================
+
+PHASE 1 : RECONNAISSANCE
+    → Scanner de ports
+    → Identification des services
+    → Collecte d'informations (OSINT)
+
+PHASE 2 : DÉTECTION
+    → Analyse des logs
+    → Identification des attaques
+    → Corrélation des événements
+
+PHASE 3 : RAPPORT
+    → Documentation des trouvailles
+    → Évaluation des risques
+    → Recommandations de sécurité
+
+
+================================================================================
+                         📚 RESSOURCES POUR ALLER PLUS LOIN
+================================================================================
+
+SITES DE PRATIQUE :
+- scanme.nmap.org (test légal de scan de ports)
+- HackTheBox (challenges cyber)
+- TryHackMe (tutoriels cyber)
+
+OUTILS PRO :
+- Nmap (scanner de ports avancé)
+- Wireshark (analyse de trafic réseau)
+- Metasploit (framework de pentesting)
+
+CERTIFICATIONS :
+- CEH (Certified Ethical Hacker)
+- OSCP (Offensive Security Certified Professional)
+- CompTIA Security+
+
+
+================================================================================
+              💪 CRÉÉ PENDANT L'APPRENTISSAGE PYTHON + CYBER 💪
+                    De jardinier à Cybersecurity AI Engineer !
+================================================================================
