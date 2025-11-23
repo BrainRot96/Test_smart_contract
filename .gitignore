@@ -18,3 +18,11 @@ ENV/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Cyber - Historiques sensibles
+scans_historique.json
+historique_analyses.json
+
+# Cyber - Historiques sensibles
+scans_historique.json
+historique_analyses.json

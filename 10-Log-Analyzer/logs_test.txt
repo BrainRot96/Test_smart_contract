@@ -1,0 +1,13 @@
+2024-11-22 10:15:23 - 192.168.1.50 - GET /page?id=1 - 200 OK
+2024-11-22 10:16:45 - 192.168.1.100 - GET /page?id=1' UNION SELECT * FROM users-- - 403 Forbidden
+2024-11-22 10:17:12 - 192.168.1.100 - POST /login - Failed password for admin
+2024-11-22 10:17:45 - 192.168.1.100 - POST /login - Failed password for admin
+2024-11-22 10:18:20 - 192.168.1.100 - POST /login - Failed password for admin
+2024-11-22 10:18:55 - 192.168.1.100 - POST /login - Failed password for admin
+2024-11-22 10:19:30 - 192.168.1.100 - POST /login - Failed password for admin
+2024-11-22 10:20:01 - 192.168.1.75 - GET /../../etc/passwd - 404 Not Found
+2024-11-22 10:21:15 - 192.168.1.50 - GET /about - 200 OK
+2024-11-22 10:22:30 - 192.168.1.75 - GET /search?q=<script>alert('XSS')</script> - 403 Forbidden
+2024-11-22 10:23:45 - 192.168.1.50 - GET /contact - 200 OK
+2024-11-22 10:24:00 - 192.168.1.100 - GET /admin?cmd=cat /etc/passwd - 403 Forbidden
+
