@@ -1,0 +1,10 @@
+name: tip_jar
+
+plugins:
+  - name: vyper
+  - name: infura
+
+default_ecosystem: ethereum
+
+ethereum:
+  default_network: sepolia
