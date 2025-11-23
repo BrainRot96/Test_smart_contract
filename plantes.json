@@ -1,0 +1,23 @@
+[
+  {
+    "nom": "Viburnum",
+    "espece": "Ficus",
+    "lieu": "jardin",
+    "date_ajout": "2025-11-22",
+    "notes": "Fleurs blanches"
+  },
+  {
+    "nom": "Viorne obier",
+    "espece": "Rosa",
+    "lieu": "jardin",
+    "date_ajout": "2025-11-22",
+    "notes": "toxique"
+  },
+  {
+    "nom": "Fraisier commun",
+    "espece": "rosa",
+    "lieu": "balcon",
+    "date_ajout": "2025-11-22",
+    "notes": "comestible"
+  }
+]
