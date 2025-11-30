@@ -1,4 +1,25 @@
-# Python
+
+
+
+
+# Fichiers Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Fichiers sensibles
+.env
+*.env
+
+# Cyber - Fichiers sensibles
+scans_historique.json
+historique_analyses.json
+rapport_soc_*.md
+
+# Fichiers système
+.DS_Store
+plantes.json# Python
 __pycache__/
 *.py[cod]
 *.pyc
