@@ -7,11 +7,49 @@ print("🛡️ ASSISTANT SOC - Analyse de Sécurité avec IA\n")
 
 # PARTIE 1 : CONFIGURATION DES PATTERNS D'ATTAQUES
 PATTERNS_ATTAQUES = {
-    "SQL Injection": r"(union|select|insert|drop|delete).*from|('|\")\s*(or|and)\s*('|\")|--",
-    "XSS": r"<script|javascript:|onerror=|onload=|alert\(",
-    "Directory Traversal": r"\.\./|\.\.\\|/etc/passwd|/etc/shadow",
-    "Brute Force": r"failed.*password|invalid.*login",
-    "Command Injection": r";\s*(cat|ls|rm|wget|curl)\s"
+# CVE spécifiques (priorité haute)
+    "CVE-2021-44228 (Log4Shell)": {
+        "pattern": r"\$\{jndi:(ldap|rmi|dns)://",
+        "cvss": 10.0,
+        "gravite": "CRITIQUE"
+    },
+    "CVE-2017-0144 (EternalBlue)": {
+        "pattern": r"MS17-010|SMBv1.*exploit",
+        "cvss": 9.3,
+        "gravite": "CRITIQUE"
+    },
+    "CVE-2014-6271 (Shellshock)": {
+        "pattern": r"\(\)\s*\{\s*:;\s*\}",
+        "cvss": 9.8,
+        "gravite": "CRITIQUE"
+    },
+    
+    # Attaques génériques
+    "SQL Injection": {
+        "pattern": r"(union|select|insert|drop|delete).*from|('|\")\s*(or|and)\s*('|\")|--",
+        "cvss": 8.5,
+        "gravite": "ÉLEVÉ"
+    },
+    "XSS": {
+        "pattern": r"<script|javascript:|onerror=|onload=|alert\(",
+        "cvss": 6.1,
+        "gravite": "MOYEN"
+    },
+    "Directory Traversal": {
+        "pattern": r"\.\./|\.\.\\|/etc/passwd|/etc/shadow",
+        "cvss": 7.5,
+        "gravite": "ÉLEVÉ"
+    },
+    "Brute Force": {
+        "pattern": r"failed.*password|invalid.*login",
+        "cvss": 5.3,
+        "gravite": "MOYEN"
+    },
+    "Command Injection": {
+        "pattern": r";\s*(cat|ls|rm|wget|curl)\s",
+        "cvss": 9.0,
+        "gravite": "CRITIQUE"
+    }
 }
 
 print("✅ Patterns d'attaques chargés")
@@ -34,13 +72,26 @@ def extraire_ip(ligne):
         return "IP inconnue"
 
 def analyser_ligne(ligne):
-    """Analyse une ligne de log et détecte les attaques"""
+    """Analyse une ligne de log et détecte les attaques avec CVE et CVSS"""
     attaques_detectees = []
     
-    for nom_attaque, pattern in PATTERNS_ATTAQUES.items():
+    # Parcourir tous patterns avec .items()
+    for nom_attaque, infos in PATTERNS_ATTAQUES.items():
+
+        # Extraire le pattern regex du dictionnaire
+        pattern = infos.get("pattern", "")
+        cvss = infos.get("cvss", 0.0)
+        gravite = infos.get("gravite", "INCONNU")
+
+        # Chercher le pattern dans la ligne
         if re.search(pattern, ligne, re.IGNORECASE):
-            attaques_detectees.append(nom_attaque)
-    
+            # Ajouter l'attaque avec ses infos
+            attaques_detectees.append({
+                "nom": nom_attaque,
+                "cvss": cvss,
+                "gravite": gravite
+            })
+        
     return attaques_detectees
 
 def analyser_fichier_logs(fichier):
@@ -65,24 +116,43 @@ def analyser_fichier_logs(fichier):
             if attaques:
                 ip = extraire_ip(ligne)
                 
+                # Calculer le CVSS maximum (l'attaque la plus grave)
+                cvss_max = max(a.get("cvss", 0) for a in attaques)
+                gravite_max = max(attaques, key=lambda a: a.get("cvss", 0)).get("gravite", "INCONNU")
+
                 alerte = {
                     "ligne": numero_ligne,
                     "ip": ip,
                     "contenu": ligne.strip(),
-                    "attaques": attaques
+                    "attaques": attaques,
+                    "cvss_max": cvss_max,
+                    "gravite_max": gravite_max
                 }
                 
                 alertes.append(alerte)
+
+                # Afficher en temps réel avec couleurs selon gravité
+                if cvss_max >= 9.0:
+                    emoji = "🔴"
+                elif cvss_max >= 7.0:
+                    emoji = "🟠"
+                elif cvss_max >= 4.0:
+                    emoji = "🟡"
+                else:
+                    emoji = "🟢"
                 
-                print(f"\n🚨 ALERTE Ligne {numero_ligne}")
+                print(f"\n{emoji} ALERTE Ligne {numero_ligne} - {gravite_max} (CVSS {cvss_max})")
                 print(f"   IP : {ip}")
-                print(f"   Type(s) : {', '.join(attaques)}")
-                print(f"   Log : {ligne.strip()[:70]}...")
-    
+
+                # Afficher chaque type d'attaque
+                for attaque in attaques:
+                    nom = attaque.get("nom", "Inconnu")
+                    cvss = attaque.get("cvss", 0)
+                    print(f"   └─ {nom} (CVSS {cvss})")
+                
+                
     print("\n" + "="*60)
     print(f"📊 ANALYSE TERMINÉE")
-    print(f"   Lignes analysées : {lignes_analysees}")
-    print(f"   Alertes détectées : {len(alertes)}")
     print("="*60)
     
     return alertes
@@ -117,11 +187,24 @@ def analyser_avec_ia(alertes):
         ip = alerte.get("ip", "Inconnue")
         attaques = alerte.get("attaques", [])
         ligne = alerte.get("ligne", 0)
+        cvss_max = alerte.get("cvss_max", 0.0)
+        gravite_max = alerte.get("gravite_max", "INCONNU")
+
+        # Formater les attaques pour l'IA
+        attaques_formattees = []
+        for att in attaques:
+            attaques_formattees.append({
+                "nom": att.get("nom", "Inconnu"),
+                "cvss": att.get("cvss", 0.0),
+                "gravite": att.get("gravite", "INCONNU")
+            })
         
         resume_alertes.append({
             "ligne": ligne,
             "ip": ip,
-            "types": attaques
+            "cvss_max": cvss_max,
+            "gravite": gravite_max,
+            "attaques": attaques_formattees
         })
     
     # Créer le prompt pour Claude
@@ -131,12 +214,14 @@ Voici les alertes de sécurité détectées dans les logs serveur :
 
 {json.dumps(resume_alertes, indent=2, ensure_ascii=False)}
 
-Analyse ces alertes et fournis :
+Analyse ces alertes en tenant compte des scores CVSS et fournis :
 
-1. 📊 RÉSUMÉ : Vue d'ensemble des attaques
-2. 🎯 ATTAQUES PAR IP : Grouper les attaques par adresse IP suspecte
-3. ⚠️ NIVEAU DE RISQUE : Évaluer la gravité (CRITIQUE/ÉLEVÉ/MOYEN)
-4. 💡 RECOMMANDATIONS : Actions concrètes à prendre immédiatement
+1. 📊 RÉSUMÉ : Vue d'ensemble des attaques avec focus sur les CVE critiques
+2. 🎯 ATTAQUES PAR IP : Grouper par IP avec le CVSS maximum de chaque IP
+3. ⚠️ PRIORISATION : Trier par urgence selon CVSS (10.0 = IMMÉDIAT, 7-9 = URGENT, 4-6 = IMPORTANT, 0-3 = SURVEILLER)
+4. 💡 RECOMMANDATIONS : Actions concrètes PRIORISÉES selon les scores CVSS
+
+Pour les CVE connus (Log4Shell, EternalBlue, etc.), explique brièvement le risque.
 
 Sois concis et précis. Format en texte clair avec des émojis."""
 
@@ -166,7 +251,7 @@ Sois concis et précis. Format en texte clair avec des émojis."""
 def sauvegarder_rapport(reponse_ia, alertes):
     """Sauvegarde le rapport d'analyse dans un fichier Markdown"""
 
-    # Créer el nom du fichier avec la date
+    # Créer le nom du fichier avec la date
     date_rapport = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     nom_fichier = f"rapport_soc_{date_rapport}.md"
 
@@ -177,6 +262,7 @@ def sauvegarder_rapport(reponse_ia, alertes):
 **Date :** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
 ---
+
 ## 📊 STATISTIQUES
 
 - **Alertes détectées :** {len(alertes)}
@@ -194,29 +280,52 @@ def sauvegarder_rapport(reponse_ia, alertes):
 
 """
     
-    # Ajouter chaque alerte 
-    for i, alerte in enumerate(alertes, 1):
+    # Trier les alertes par CVSS (les plus graves en premier)
+    alertes_triees = sorted(alertes, key=lambda a: a.get("cvss_max", 0), reverse=True)
+
+    # Ajouter chaque alerte avec CVSS
+    for i, alerte in enumerate(alertes_triees, 1):
         ligne = alerte.get("ligne", 0)
         ip = alerte.get("ip", "Inconnue")
         attaques = alerte.get("attaques", [])
         contenu = alerte.get("contenu", "")
+        cvss_max = alerte.get("cvss_max", 0.0)
+        gravite_max = alerte.get("gravite_max", "INCONNU")
+        
+        # Emoji selon gravité
+        if cvss_max >= 9.0:
+            emoji = "🔴"
+        elif cvss_max >= 7.0:
+            emoji = "🟠"
+        elif cvss_max >= 4.0:
+            emoji = "🟡"
+        else:
+            emoji = "🟢"
+        
+        rapport += f"""### {emoji} Alerte #{i} - {gravite_max} (CVSS {cvss_max})
 
-        rapport += f"""### Alerte #{i}
 - **Ligne :** {ligne}
 - **IP :** {ip}
-- **Types :** {', '.join(attaques)}
-- **Log :** `{contenu[:100]}...`
-
+- **Gravité :** {gravite_max} (Score CVSS : {cvss_max}/10.0)
+- **Attaques détectées :**
 """
-        #Sauvegarder le fichier
-        with open(nom_fichier, 'w', encoding='utf_8') as f:
-            f.write(rapport)
+        
+        # Lister chaque attaque avec son CVSS
+        for att in attaques:
+            nom = att.get("nom", "Inconnu")
+            cvss = att.get("cvss", 0.0)
+            gravite = att.get("gravite", "INCONNU")
+            rapport += f"  - {nom} (CVSS {cvss} - {gravite})\n"
+        
+        rapport += f"\n- **Log :** `{contenu[:100]}...`\n\n"
 
-        print(f"✅ Rapport sauvegardé : {nom_fichier}")
-
-        return nom_fichier
-
-
+    # Sauvegarder le fichier
+    with open(nom_fichier, 'w', encoding='utf-8') as f:
+        f.write(rapport)
+    
+    print(f"✅ Rapport sauvegardé : {nom_fichier}")
+    
+    return nom_fichier
 
 # PROGRAMME PRINCIPAL - TEST
 chemin_fichier = os.path.join(os.path.dirname(__file__), "server_logs.txt")
