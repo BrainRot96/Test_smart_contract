@@ -2,6 +2,17 @@ from flask import Flask, request, render_template_string
 import sqlite3
 
 app = Flask(__name__)
+app.config['WTF_CSRF_ENABLED'] = False  # Désactiver CSRF (app de test)
+app.config['WTF_CSRF_CHECK_DEFAULT'] = False
+app.config['TESTING'] = True
+
+# Désactiver TOUTES les protections
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', '*')
+    return response
 
 # Créer une base de données SQLite en mémoire
 def init_db():
@@ -30,7 +41,7 @@ def init_db():
 # Base de données globale
 db = init_db()
 
-# PAGE D'ACCUEIL
+# PAGE D'ACCUEIL    
 @app.route('/')
 def home():
     html = '''
