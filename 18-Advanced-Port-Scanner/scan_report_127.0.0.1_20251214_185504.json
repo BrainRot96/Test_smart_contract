@@ -1,0 +1,157 @@
+{
+  "target": "127.0.0.1",
+  "scan_date": "2025-12-14 18:55:04",
+  "duration_seconds": 4.012582063674927,
+  "total_ports": 20,
+  "open_ports": 1,
+  "summary": {
+    "open": 1,
+    "closed": 19,
+    "filtered": 0
+  },
+  "results": [
+    {
+      "status": "closed",
+      "service": "Telnet",
+      "port": 23,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "SMB",
+      "port": 445,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "SSH",
+      "port": 22,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "FTP",
+      "port": 21,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "HTTPS",
+      "port": 443,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "DNS",
+      "port": 53,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "SMTP",
+      "port": 25,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "HTTP",
+      "port": 80,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "IMAP",
+      "port": 143,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "VNC",
+      "port": 5900,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "POP3",
+      "port": 110,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "RDP",
+      "port": 3389,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "HTTP-Alt",
+      "port": 8080,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "MySQL",
+      "port": 3306,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "Redis",
+      "port": 6379,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "Elasticsearch",
+      "port": 9200,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "PostgreSQL",
+      "port": 5432,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "HTTPS-Alt",
+      "port": 8443,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "closed",
+      "service": "MongoDB",
+      "port": 27017,
+      "banner": null,
+      "banner_info": {}
+    },
+    {
+      "status": "open",
+      "service": "Flask",
+      "port": 5000,
+      "banner": null,
+      "banner_info": {
+        "service": "Unknown",
+        "version": "Unknown"
+      }
+    }
+  ]
+}
