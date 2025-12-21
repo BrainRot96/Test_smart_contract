@@ -1,0 +1,46 @@
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Fichiers de configuration sensibles
+.env
+*.env
+.env.*
+
+# Clés API et secrets
+*_API_KEY*
+*api_key*
+*.pem
+*.key
+
+# Fichiers de données sensibles (Cyber)
+scans_historique.json
+historique_analyses.json
+rapport_soc_*.md
+
+# Logs et fichiers temporaires
+*.log
+*.txt
+!requirements.txt
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+*~

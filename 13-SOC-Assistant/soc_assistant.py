@@ -3,6 +3,81 @@ import json
 import os
 from datetime import datetime
 
+def creer_dossier_rapports():
+    """Crée le dossier rapports s'il n'existe pas"""
+    dossier = os.path.join(os.path.dirname(__file__), "rapports")
+    if not os.path.exists(dossier):
+        os.makedirs(dossier)
+        print(f"📁 Dossier 'rapports' créé")
+    return dossier
+
+def geolocalisater_ip(ip):
+    """
+    Géolocalise une adresse IP avec l'API ip-api.com
+    Retourne un dictionnaire avec pays, ville, lat, lon
+    """
+    
+    # Vérifier que l'IP est valide (pas "IP inconnue")
+    if ip == "IP inconnue" or not ip:
+        return {
+            "pays": "Inconnu",
+            "ville": "Inconnue",
+            "region": "Inconnue",
+            "latitude": None,
+            "longitude": None,
+            "isp": "Inconnu"
+        }
+    
+    # Vérifier si c'est une IP locale/privée
+    if ip.startswith(("127.", "192.168.", "10.", "172.")):
+        return {
+            "pays": "Local/Privé",
+            "ville": "Réseau local",
+            "region": "N/A",
+            "latitude": None,
+            "longitude": None,
+            "isp": "Réseau privé"
+        }
+    
+    try:
+        # Appeler l'API de géolocalisation
+        url = f"http://ip-api.com/json/{ip}?fields=status,country,regionName,city,lat,lon,isp"
+        response = requests.get(url, timeout=3)
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            if data.get("status") == "success":
+                return {
+                    "pays": data.get("country", "Inconnu"),
+                    "ville": data.get("city", "Inconnue"),
+                    "region": data.get("regionName", "Inconnue"),
+                    "latitude": data.get("lat"),
+                    "longitude": data.get("lon"),
+                    "isp": data.get("isp", "Inconnu")
+                }
+        
+        # Si échec, retourner valeurs par défaut
+        return {
+            "pays": "Inconnu",
+            "ville": "Inconnue",
+            "region": "Inconnue",
+            "latitude": None,
+            "longitude": None,
+            "isp": "Inconnu"
+        }
+        
+    except Exception as e:
+        print(f"⚠️ Erreur géolocalisation pour {ip}: {e}")
+        return {
+            "pays": "Erreur",
+            "ville": "Erreur",
+            "region": "Erreur",
+            "latitude": None,
+            "longitude": None,
+            "isp": "Erreur"
+        }
+
 print("🛡️ ASSISTANT SOC - Analyse de Sécurité avec IA\n")
 
 # PARTIE 1 : CONFIGURATION DES PATTERNS D'ATTAQUES
@@ -119,6 +194,9 @@ def analyser_fichier_logs(fichier):
                 # Calculer le CVSS maximum (l'attaque la plus grave)
                 cvss_max = max(a.get("cvss", 0) for a in attaques)
                 gravite_max = max(attaques, key=lambda a: a.get("cvss", 0)).get("gravite", "INCONNU")
+                # NOUVEAU : Géolocaliser l'IP
+                geo_info = geolocalisater_ip(ip)
+
 
                 alerte = {
                     "ligne": numero_ligne,
@@ -126,7 +204,8 @@ def analyser_fichier_logs(fichier):
                     "contenu": ligne.strip(),
                     "attaques": attaques,
                     "cvss_max": cvss_max,
-                    "gravite_max": gravite_max
+                    "gravite_max": gravite_max,
+                    "geolocalisation": geo_info
                 }
                 
                 alertes.append(alerte)
@@ -143,6 +222,8 @@ def analyser_fichier_logs(fichier):
                 
                 print(f"\n{emoji} ALERTE Ligne {numero_ligne} - {gravite_max} (CVSS {cvss_max})")
                 print(f"   IP : {ip}")
+                print(f"   📍 Localisation : {geo_info['ville']}, {geo_info['pays']}")  # NOUVEAU
+                print(f"   🌐 ISP : {geo_info['isp']}")
 
                 # Afficher chaque type d'attaque
                 for attaque in attaques:
@@ -253,7 +334,8 @@ def sauvegarder_rapport(reponse_ia, alertes):
 
     # Créer le nom du fichier avec la date
     date_rapport = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    nom_fichier = f"rapport_soc_{date_rapport}.md"
+    dossier_rapports = creer_dossier_rapports()
+    nom_fichier = os.path.join(dossier_rapports, f"rapport_soc_{date_rapport}.md")
 
     print(f"\n💾 Sauvegarde du rapport...")
 
@@ -306,6 +388,8 @@ def sauvegarder_rapport(reponse_ia, alertes):
 
 - **Ligne :** {ligne}
 - **IP :** {ip}
+- **📍 Localisation :** {alerte.get('geolocalisation', {}).get('ville', 'Inconnue')}, {alerte.get('geolocalisation', {}).get('pays', 'Inconnu')}
+- **🌐 ISP :** {alerte.get('geolocalisation', {}).get('isp', 'Inconnu')}
 - **Gravité :** {gravite_max} (Score CVSS : {cvss_max}/10.0)
 - **Attaques détectées :**
 """
